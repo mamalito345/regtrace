@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "regtrace-core"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.12,<3",
+    "openai>=1.0",
+    "mcp[cli]>=2.2,<3",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["regtrace*"]
+
+[tool.pytest.ini_options]
+testpaths = ["../tests"]

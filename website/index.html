@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegTrace — Built for IBM Bob 2.0 Hackathon & LexHack 2026</title>
+  <meta name="description" content="RegTrace brings company policies into Claude's software-development workflow before coding, during implementation, and after the code is written." />
+  <style>
+    :root{
+      --bg:#07090d;--soft:#0c1017;--panel:#10151d;--line:rgba(255,255,255,.09);
+      --line2:rgba(255,255,255,.17);--text:#f6f8fb;--muted:#9ba7b7;--muted2:#718096;
+      --accent:#84f7c2;--blue:#7ac7ff;--red:#ff8f9a;--green:#90f5b6;
+      --shadow:0 24px 80px rgba(0,0,0,.36);--radius:22px;--max:1180px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{margin:0;color:var(--text);background:
+      radial-gradient(circle at 15% 5%,rgba(122,199,255,.10),transparent 30%),
+      radial-gradient(circle at 85% 10%,rgba(132,247,194,.08),transparent 28%),
+      linear-gradient(180deg,#07090d 0%,#080a0f 48%,#07090d 100%);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    .noise{pointer-events:none;position:fixed;inset:0;opacity:.025;z-index:1000;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E")}
+    .topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:72px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.065);background:rgba(7,9,13,.74);backdrop-filter:blur(18px)}
+    .nav{width:min(calc(100% - 40px),var(--max));margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{display:inline-flex;align-items:center;gap:11px;font-weight:760;letter-spacing:-.02em;font-size:17px}
+    .brand-mark{width:30px;height:30px;border-radius:9px;position:relative;background:linear-gradient(135deg,rgba(132,247,194,.95),rgba(122,199,255,.9));box-shadow:0 0 0 1px rgba(255,255,255,.10) inset,0 8px 28px rgba(122,199,255,.14)}
+    .brand-mark:before,.brand-mark:after{content:"";position:absolute;left:7px;right:7px;height:2px;background:#071018;border-radius:10px}
+    .brand-mark:before{top:10px;transform:rotate(12deg)} .brand-mark:after{top:18px;transform:rotate(-12deg)}
+    .nav-links{display:flex;align-items:center;gap:24px;color:var(--muted);font-size:14px}
+    .nav-links a:hover{color:var(--text)}
+    .nav-cta{padding:10px 15px;border-radius:11px;background:rgba(255,255,255,.055);border:1px solid var(--line);color:#e9eef5!important}
+    main{position:relative;z-index:1} section{width:min(calc(100% - 40px),var(--max));margin:0 auto}
+    .hero{min-height:100vh;padding-top:140px;padding-bottom:90px;display:grid;grid-template-columns:1.12fr .88fr;align-items:center;gap:70px}
+    .eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 11px;border-radius:999px;border:1px solid rgba(132,247,194,.18);background:rgba(132,247,194,.05);color:#b8ffdc;font-size:13px;font-weight:650}
+    .eyebrow-dot{width:7px;height:7px;border-radius:999px;background:var(--accent);box-shadow:0 0 16px rgba(132,247,194,.8)}
+    .competition{margin-top:13px;color:#758294;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+    h1{margin:24px 0 22px;max-width:760px;font-size:clamp(58px,7.8vw,108px);line-height:.91;letter-spacing:-.068em;font-weight:810}
+    h1 .gradient{color:transparent;background:linear-gradient(95deg,#f7fbff 0%,#a8dbff 45%,#8ff2c2 100%);-webkit-background-clip:text;background-clip:text}
+    .hero-copy{max-width:690px;font-size:clamp(18px,2vw,22px);line-height:1.62;color:#aeb9c7;letter-spacing:-.015em}.hero-copy strong{color:#edf4fb;font-weight:650}
+    .hero-actions{display:flex;align-items:center;gap:13px;margin-top:34px;flex-wrap:wrap}
+    .button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 18px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#eef5fb;font-weight:680;font-size:14px;cursor:pointer;transition:transform .2s ease,border-color .2s ease,background .2s ease}
+    .button:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22)}
+    .button.primary{color:#06110c;border-color:transparent;background:linear-gradient(135deg,#91f8c8 0%,#79d9ff 100%);box-shadow:0 12px 38px rgba(122,199,255,.14)}
+    .hero-note{margin-top:25px;display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;color:var(--muted2);font-size:13px}.hero-note span{display:inline-flex;align-items:center;gap:7px}.hero-note span:before{content:"";width:4px;height:4px;border-radius:999px;background:#566273}
+    .hero-visual{position:relative;min-height:550px;display:flex;align-items:center;justify-content:center}.hero-glow{position:absolute;width:400px;height:400px;border-radius:50%;filter:blur(70px);background:rgba(93,180,255,.09)}
+    .terminal{width:min(100%,510px);position:relative;border-radius:22px;border:1px solid var(--line2);background:linear-gradient(180deg,rgba(18,24,34,.96),rgba(12,16,24,.96));box-shadow:var(--shadow);overflow:hidden;transform:rotate(1deg)}
+    .terminal-header{height:47px;display:flex;align-items:center;gap:7px;padding:0 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.017)}.dot{width:9px;height:9px;border-radius:999px;background:#3f4855}.terminal-title{margin-left:7px;color:#7f8b9a;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.terminal-body{padding:24px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.75}
+    .muted{color:#738091}.white{color:#dce6ef}.green{color:#9bf4bf}.blue{color:#8dcfff}.red{color:#ff9ba5}.terminal-rule{height:1px;background:var(--line);margin:17px 0}
+    .section{padding:135px 0;position:relative}.section-kicker{margin-bottom:14px;color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
+    h2{margin:0;max-width:900px;font-size:clamp(42px,5.7vw,75px);line-height:1.01;letter-spacing:-.055em;font-weight:790}.section-lead{margin-top:25px;max-width:760px;color:var(--muted);font-size:19px;line-height:1.65;letter-spacing:-.012em}
+    .grid3{margin-top:64px;display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{position:relative;overflow:hidden;border-radius:var(--radius);border:1px solid var(--line);background:linear-gradient(180deg,rgba(18,23,32,.87),rgba(12,16,23,.84));box-shadow:0 14px 55px rgba(0,0,0,.16);padding:27px;min-height:255px}.num{color:#5f6a79;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.card h3{margin:60px 0 12px;font-size:21px;letter-spacing:-.03em}.card p{margin:0;color:var(--muted);line-height:1.55;font-size:14px}
+    .flow-wrap{margin-top:70px;padding:30px;border-radius:28px;border:1px solid var(--line);background:rgba(10,13,19,.62);box-shadow:var(--shadow)}.flow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:center;gap:10px}.flow-node{min-height:125px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.025);padding:17px;display:flex;flex-direction:column;justify-content:space-between}.flow-node.active{background:linear-gradient(180deg,rgba(132,247,194,.08),rgba(122,199,255,.035));border-color:rgba(132,247,194,.21)}.flow-node small{color:#718093;font-size:10px;text-transform:uppercase;letter-spacing:.12em}.flow-node strong{font-size:14px;line-height:1.3}.flow-arrow{display:flex;align-items:center;justify-content:center;color:#475466;font-size:22px}
+    .demo-shell{margin-top:66px;border-radius:26px;border:1px solid var(--line2);overflow:hidden;background:#0b0f15;box-shadow:var(--shadow)}.demo-top{min-height:47px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02);color:#7f8a99;font-size:12px}.demo-grid{display:grid;grid-template-columns:.92fr 1.08fr}.demo-pane{padding:29px;min-height:500px}.demo-pane+.demo-pane{border-left:1px solid var(--line)}.label{display:flex;align-items:center;gap:8px;color:#738094;text-transform:uppercase;letter-spacing:.1em;font-size:10px;font-weight:750}.policy-block{margin-top:20px;border-left:2px solid var(--accent);padding:2px 0 2px 18px;color:#d7e0e9;font-size:16px;line-height:1.6}
+    .code{margin-top:22px;border-radius:15px;padding:18px;border:1px solid var(--line);background:#070a0f;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.75;overflow:auto;white-space:pre-wrap}.finding{margin-top:21px;border-radius:16px;padding:17px 18px;border:1px solid rgba(255,143,154,.17);background:rgba(255,143,154,.045)}.finding strong{color:#ffc2c8}.finding p{margin:10px 0 0;color:#9da9b8;font-size:13px;line-height:1.55}.fixed{border-color:rgba(144,245,182,.17);background:rgba(144,245,182,.045)}.fixed strong{color:#aff5c9}
+    .install{margin-top:64px;display:grid;grid-template-columns:.75fr 1.25fr;gap:18px}.install-info,.install-terminal{border:1px solid var(--line);border-radius:var(--radius);background:rgba(16,21,29,.75);padding:29px}.install-info h3{font-size:26px;letter-spacing:-.04em;margin:18px 0 12px}.install-info p{color:var(--muted);line-height:1.6;font-size:14px}.step{display:flex;gap:12px;margin-top:19px;color:#dce5ee;font-size:14px}.step b{display:grid;place-items:center;flex:0 0 26px;height:26px;border-radius:8px;background:rgba(132,247,194,.07);border:1px solid rgba(132,247,194,.15);color:var(--accent);font-size:11px}.install-terminal .code{margin-top:0}.install-note{margin-top:17px;color:#758294;font-size:12px;line-height:1.55}
+    .cta{padding-top:140px;padding-bottom:140px;text-align:center}.cta-box{border-radius:32px;border:1px solid var(--line2);padding:85px 35px;background:radial-gradient(circle at 50% 0%,rgba(122,199,255,.13),transparent 45%),linear-gradient(180deg,rgba(18,24,33,.88),rgba(11,15,21,.95));box-shadow:var(--shadow)}.cta-box h2{margin:0 auto;max-width:850px}.cta-box p{max-width:670px;margin:24px auto 0;color:var(--muted);font-size:18px;line-height:1.65}.cta-box .hero-actions{justify-content:center}
+    footer{width:min(calc(100% - 40px),var(--max));margin:0 auto;padding:28px 0 42px;display:flex;justify-content:space-between;align-items:center;gap:20px;border-top:1px solid var(--line);color:#657184;font-size:12px}
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .85s cubic-bezier(.2,.75,.2,1),transform .85s cubic-bezier(.2,.75,.2,1)}.reveal.visible{opacity:1;transform:translateY(0)}
+    @media(max-width:980px){.nav-links a:not(.nav-cta){display:none}.hero{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.flow-arrow{transform:rotate(90deg);height:28px}.demo-grid,.install{grid-template-columns:1fr}.demo-pane+.demo-pane{border-left:0;border-top:1px solid var(--line)}}
+    @media(max-width:620px){.nav,section,footer{width:min(calc(100% - 26px),var(--max))}.hero{padding-top:125px}h1{font-size:56px}.section{padding:95px 0}.flow-wrap,.demo-pane,.install-info,.install-terminal{padding:20px}footer{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+<div class="noise"></div>
+<header class="topbar">
+  <div class="nav">
+    <a href="#top" class="brand"><span class="brand-mark"></span><span>RegTrace</span></a>
+    <nav class="nav-links">
+      <a href="#why">Why</a><a href="#workflow">Workflow</a><a href="#demo">Demo</a><a href="#install">Install</a>
+      <a class="nav-cta github-link" href="https://github.com/YOUR_USERNAME/regtrace" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <div>
+    <div class="eyebrow reveal visible"><span class="eyebrow-dot"></span>Policy-aware development for Claude</div>
+    <div class="competition reveal visible">Built for IBM Bob 2.0 Hackathon · LexHack 2026</div>
+    <h1 class="reveal visible">Make policy part of the <span class="gradient">development loop.</span></h1>
+    <p class="hero-copy reveal visible">RegTrace brings your company's policies into Claude's workflow <strong>before code is written, while implementation is happening, and after the code is complete.</strong></p>
+    <div class="hero-actions reveal visible">
+      <a class="button primary" href="#workflow">See the workflow ↓</a>
+      <a class="button github-link" href="https://github.com/mamalito345/regtrace" target="_blank" rel="noreferrer">View on GitHub ↗</a>
+    </div>
+    <div class="hero-note reveal visible"><span>Claude Desktop</span><span>Local repository access</span><span>Your policy documents</span></div>
+  </div>
+  <div class="hero-visual reveal visible">
+    <div class="hero-glow"></div>
+    <div class="terminal">
+      <div class="terminal-header"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="terminal-title">Claude + RegTrace</span></div>
+      <div class="terminal-body">
+        <div class="muted">feature</div><div class="white">Export customer profiles to external CRM</div>
+        <div class="terminal-rule"></div>
+        <div class="blue">RegTrace · plan review</div><div class="white">↳ Policy requires explicit consent</div><div class="white">↳ Add consent gate before external transfer</div>
+        <div class="terminal-rule"></div>
+        <div class="red">RegTrace · post-code review</div><div class="white">customer_export.py</div><div class="red">↳ CRM call executes without consent gate</div>
+        <div class="terminal-rule"></div>
+        <div class="green">Claude · fix applied</div><div class="green">RegTrace · fresh review clear</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why">
+  <div class="section-kicker reveal">The gap</div>
+  <h2 class="reveal">Coding agents know your code.<br>They do not automatically know your rules.</h2>
+  <p class="section-lead reveal">Company policies often live in PDFs, documents, wikis, and legal text. Development happens somewhere else. RegTrace connects those two worlds inside the coding workflow itself.</p>
+  <div class="grid3">
+    <article class="card reveal"><div class="num">01</div><h3>Policy is disconnected from planning</h3><p>A feature can be technically valid while its implementation plan already conflicts with internal privacy, security, or governance rules.</p></article>
+    <article class="card reveal"><div class="num">02</div><h3>Code review happens too late</h3><p>Requirements discovered after implementation create rework. RegTrace introduces policy review before the first code change.</p></article>
+    <article class="card reveal"><div class="num">03</div><h3>Generic advice misses the repository</h3><p>RegTrace gives Claude the actual local project so policy reasoning is grounded in real files, functions, integrations, and data flows.</p></article>
+  </div>
+</section>
+
+<section class="section" id="workflow">
+  <div class="section-kicker reveal">Workflow</div>
+  <h2 class="reveal">One development loop.<br>Policy checked at every critical moment.</h2>
+  <p class="section-lead reveal">Attach the relevant policy documents to the Claude conversation, provide the local repository path, and let RegTrace enforce the review sequence.</p>
+  <div class="flow-wrap reveal">
+    <div class="flow">
+      <div class="flow-node"><small>Input</small><strong>Feature request</strong></div><div class="flow-arrow">→</div>
+      <div class="flow-node active"><small>01</small><strong>Claude creates a plan</strong></div><div class="flow-arrow">→</div>
+      <div class="flow-node active"><small>02</small><strong>RegTrace reviews the plan</strong></div><div class="flow-arrow">→</div>
+      <div class="flow-node"><small>03</small><strong>Claude implements</strong></div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="flow">
+      <div class="flow-node"><small>Result</small><strong>Policy-aware implementation</strong></div><div class="flow-arrow">←</div>
+      <div class="flow-node active"><small>06</small><strong>Fresh final review</strong></div><div class="flow-arrow">←</div>
+      <div class="flow-node active"><small>05</small><strong>Claude fixes supported issues</strong></div><div class="flow-arrow">←</div>
+      <div class="flow-node active"><small>04</small><strong>RegTrace reviews code</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="demo">
+  <div class="section-kicker reveal">Example</div>
+  <h2 class="reveal">A feature can work perfectly<br>and still conflict with policy.</h2>
+  <p class="section-lead reveal">RegTrace is designed for that gap: functional software whose behavior conflicts with requirements supplied by the organization.</p>
+  <div class="demo-shell reveal">
+    <div class="demo-top"><span>Customer CRM export</span><span>Policy-aware review</span></div>
+    <div class="demo-grid">
+      <div class="demo-pane">
+        <div class="label">Company policy</div>
+        <div class="policy-block">Customer personal data may only be exported to an external service after explicit user consent.</div>
+        <div class="label" style="margin-top:34px">Implementation</div>
+        <div class="code">def export_customer(customer):
+    if customer.export_consent:
+        audit.log("consent-observed")
+
+    crm.send(customer.email)</div>
+      </div>
+      <div class="demo-pane">
+        <div class="label">RegTrace review</div>
+        <div class="finding"><strong>Policy issue found · customer_export.py</strong><p>The consent condition only controls logging. The CRM transfer executes even when explicit consent is absent.</p></div>
+        <div class="label" style="margin-top:30px">Claude correction</div>
+        <div class="code">def export_customer(customer):
+    if not customer.export_consent:
+        raise PermissionError(...)
+
+    crm.send(customer.email)</div>
+        <div class="finding fixed"><strong>Fresh review</strong><p>The reviewed path is now consistent with the supplied policy. RegTrace does not claim universal legal compliance.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="install">
+  <div class="section-kicker reveal">Local installation</div>
+  <h2 class="reveal">Clone it. Install it.<br>Use it inside Claude Desktop.</h2>
+  <p class="section-lead reveal">RegTrace is a local MCP extension. Your repository remains on your machine; Claude receives the repository context through the local extension.</p>
+  <div class="install">
+    <div class="install-info reveal">
+      <div class="num">INSTALL</div>
+      <h3>Three steps</h3>
+      <div class="step"><b>1</b><span>Clone the GitHub repository and install the Python requirements.</span></div>
+      <div class="step"><b>2</b><span>Claude Desktop → Settings → Extensions → Advanced settings → Extension Developer → Install unpacked extension.</span></div>
+      <div class="step"><b>3</b><span>Select the <code>mcp-adapter</code> folder, restart Claude, then attach your policies and give Claude your local repo path.</span></div>
+      <p class="install-note">Python 3.10+ required. If your system does not expose <code>python</code> on PATH, replace the manifest command with your Python executable path.</p>
+    </div>
+    <div class="install-terminal reveal">
+      <div class="label">PowerShell</div>
+      <div class="code">git clone https://github.com/YOUR_USERNAME/regtrace.git
+cd regtrace
+
+python -m pip install -r .\mcp-adapter\requirements.txt
+
+cd .\mcp-adapter
+python -c "import server; print('REGTRACE SERVER OK')"</div>
+      <div class="label" style="margin-top:24px">Claude tools</div>
+      <div class="code">regtrace_review_plan
+regtrace_review_fix</div>
+      <div class="hero-actions">
+        <a class="button primary github-link" href="https://github.com/YOUR_USERNAME/regtrace" target="_blank" rel="noreferrer">Open GitHub repository ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="cta-box reveal">
+    <div class="section-kicker">RegTrace</div>
+    <h2>Attach the policies.<br>Point Claude at the repo.<br>Build with the rules in the loop.</h2>
+    <p>Plan review before coding. Real source review after coding. Fixes applied by Claude. Fresh review after every change.</p>
+    <div class="hero-actions">
+      <a class="button primary github-link" href="https://github.com/YOUR_USERNAME/regtrace" target="_blank" rel="noreferrer">Get RegTrace on GitHub ↗</a>
+      <a class="button" href="#top">Back to top ↑</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div>RegTrace · Policy-aware development for Claude</div><div>Hackathon project · Local MCP workflow</div></footer>
+
+<script>
+  const GITHUB_REPO = "https://github.com/YOUR_USERNAME/regtrace";
+  document.querySelectorAll(".github-link").forEach(a => a.href = GITHUB_REPO);
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add("visible");
+    });
+  }, {threshold:.12, rootMargin:"0px 0px -8% 0px"});
+  document.querySelectorAll(".reveal").forEach(el => {
+    if (!el.classList.contains("visible")) observer.observe(el);
+  });
+</script>
+</body>
+</html>

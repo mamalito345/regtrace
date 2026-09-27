@@ -1,0 +1,22 @@
+{
+  "policy_id": "P-001",
+  "policy_title": "Consent required for personal data export",
+  "explanation": "Customer personal data may only be exported to an external service after explicit user consent.",
+  "constraints": [
+    {
+      "id": "C-001",
+      "requirement_id": "R-001",
+      "type": "require_before",
+      "description": "Export operation must verify consent flag is true before proceeding.",
+      "severity": "required",
+      "condition": {
+        "name": "explicit_consent",
+        "description": "Customer has granted explicit consent for data export"
+      },
+      "action": {
+        "name": "external_export",
+        "description": "Personal data is sent to an external service"
+      }
+    }
+  ]
+}

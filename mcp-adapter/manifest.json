@@ -1,0 +1,39 @@
+{
+  "manifest_version": "0.3",
+  "name": "regtrace",
+  "display_name": "RegTrace",
+  "version": "0.1.0",
+  "description": "Policy-aware planning and post-implementation code review for Claude.",
+  "long_description": "RegTrace lets Claude review implementation plans and actual repository code against company policies before and after development.",
+  "author": {
+    "name": "RegTrace"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "server.py",
+    "mcp_config": {
+      "command": "C:\\Users\\monster\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+      "args": [
+        "${__dirname}/server.py"
+      ]
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "win32"
+    ],
+    "runtimes": {
+      "python": ">=3.10,<4"
+    }
+  },
+  "tools": [
+    {
+      "name": "regtrace_review_plan",
+      "description": "Review Claude's implementation plan against company policies and the actual repository before coding."
+    },
+    {
+      "name": "regtrace_review_fix",
+      "description": "Review actual repository code against company policies and apply Claude-generated corrections when required."
+    }
+  ]
+}

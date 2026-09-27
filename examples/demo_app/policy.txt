@@ -1,0 +1,1 @@
+Customer personal data may only be exported to an external service after explicit user consent.
